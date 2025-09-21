@@ -121,6 +121,18 @@
   }
 }
 
+@layer utilities {
+  .gradient {
+    @apply bg-gradient-to-br from-[#1C507F] via-[#17426A] to-[#102D4A];
+  }
+  .gradient-title {
+    @apply font-extrabold tracking-tighter pr-2 pb-2 text-transparent bg-clip-text bg-gradient-to-br from-[#1C507F] via-[#17426A] to-[#102D4A];
+  }
+}
+
+
+
+
 .hero-image-wrapper {
   perspective: 1000px;
 }
@@ -148,7 +160,7 @@
   }
 }
 
-/* Add this class */
+Add this class
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientMove 3s ease infinite;
