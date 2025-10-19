@@ -17,7 +17,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  // output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -118,3 +118,4 @@ enum RecurringInterval {
   MONTHLY
   YEARLY
 }
+
