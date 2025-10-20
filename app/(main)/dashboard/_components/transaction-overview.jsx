@@ -37,57 +37,50 @@ export function DashboardOverview({ accounts, transactions }) {
     accounts.find((a) => a.isDefault)?.id || accounts[0]?.id
   );
 
-  // Filter transactions for selected account
+  //  Filter transactions for selected account
   const accountTransactions = transactions.filter(
     (t) => t.accountId === selectedAccountId
   );
 
-  // Get recent transactions (last 5)
-  const recentTransactions = accountTransactions
+  //  Get recent transactions (last 5)
+  const recentTransactions = [...accountTransactions]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
-  // Calculate expense breakdown for current month
+  //  Current month expense breakdown
   const currentDate = new Date();
   const currentMonthExpenses = accountTransactions.filter((t) => {
-    const transactionDate = new Date(t.date);
+    const d = new Date(t.date);
     return (
       t.type === "EXPENSE" &&
-      transactionDate.getMonth() === currentDate.getMonth() &&
-      transactionDate.getFullYear() === currentDate.getFullYear()
+      d.getMonth() === currentDate.getMonth() &&
+      d.getFullYear() === currentDate.getFullYear()
     );
   });
 
-  // Group expenses by category
-  const expensesByCategory = currentMonthExpenses.reduce((acc, transaction) => {
-    const category = transaction.category;
-    if (!acc[category]) {
-      acc[category] = 0;
-    }
-    acc[category] += transaction.amount;
+  //  Group expenses by category
+  const expensesByCategory = currentMonthExpenses.reduce((acc, t) => {
+    acc[t.category] = (acc[t.category] || 0) + t.amount;
     return acc;
   }, {});
 
-  // Format data for pie chart
+  //  Convert for PieChart
   const pieChartData = Object.entries(expensesByCategory).map(
-    ([category, amount]) => ({
+    ([category, value]) => ({
       name: category,
-      value: amount,
+      value,
     })
   );
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      {/* Recent Transactions Card */}
+      {/*  Recent Transactions Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-base font-normal">
             Recent Transactions
           </CardTitle>
-          <Select
-            value={selectedAccountId}
-            onValueChange={setSelectedAccountId}
-          >
+          <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Select account" />
             </SelectTrigger>
@@ -100,6 +93,7 @@ export function DashboardOverview({ accounts, transactions }) {
             </SelectContent>
           </Select>
         </CardHeader>
+
         <CardContent>
           <div className="space-y-4">
             {recentTransactions.length === 0 ? (
@@ -107,35 +101,31 @@ export function DashboardOverview({ accounts, transactions }) {
                 No recent transactions
               </p>
             ) : (
-              recentTransactions.map((transaction) => (
+              recentTransactions.map((t) => (
                 <div
-                  key={transaction.id}
-                  className="flex items-center justify-between"
+                  key={t.id}
+                  className="flex items-center justify-between border-b border-border/40 pb-2"
                 >
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {transaction.description || "Untitled Transaction"}
+                      {t.description || "Untitled Transaction"}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(transaction.date), "PP")}
+                    <p className="text-xs text-muted-foreground">
+                      {format(new Date(t.date), "PP")}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "flex items-center",
-                        transaction.type === "EXPENSE"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      )}
-                    >
-                      {transaction.type === "EXPENSE" ? (
-                        <ArrowDownRight className="mr-1 h-4 w-4" />
-                      ) : (
-                        <ArrowUpRight className="mr-1 h-4 w-4" />
-                      )}
-                      ${transaction.amount.toFixed(2)}
-                    </div>
+                  <div
+                    className={cn(
+                      "flex items-center text-sm font-medium",
+                      t.type === "EXPENSE" ? "text-red-500" : "text-green-500"
+                    )}
+                  >
+                    {t.type === "EXPENSE" ? (
+                      <ArrowDownRight className="mr-1 h-4 w-4" />
+                    ) : (
+                      <ArrowUpRight className="mr-1 h-4 w-4" />
+                    )}
+                    ${t.amount.toFixed(2)}
                   </div>
                 </div>
               ))
@@ -144,28 +134,29 @@ export function DashboardOverview({ accounts, transactions }) {
         </CardContent>
       </Card>
 
-      {/* Expense Breakdown Card */}
+      {/*  Expense Breakdown Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-normal">
             Monthly Expense Breakdown
           </CardTitle>
         </CardHeader>
+
         <CardContent className="p-0 pb-5">
           {pieChartData.length === 0 ? (
             <p className="text-center text-muted-foreground py-4">
               No expenses this month
             </p>
           ) : (
-            <div className="h-[300px]">
+            //  Add fixed min-height to prevent Recharts “-1” bug
+            <div className="h-[300px] min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieChartData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
+                    outerRadius={90}
                     dataKey="value"
                     label={({ name, value }) => `${name}: $${value.toFixed(2)}`}
                   >
