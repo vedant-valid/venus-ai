@@ -18,8 +18,27 @@ export default function EmailTemplate({
   },
 }) {
   if (type === "monthly-report") {
-    // Handle other template types here
-  }
+    return (
+      <Html>
+        <Head />
+        <Preview>Your Monthly Financial Report</Preview>
+        <Body style={styles.body}>
+          <Container style={styles.container}>
+            <Heading style={styles.title}>Monthly Financial Report</Heading>
+
+            <Text style={styles.text}>Hello {userName},</Text>
+            <Text style={styles.text}>
+              Here&rsquo;s your financial summary for {data?.month}:
+            </Text>
+
+            {/* Main Stats */}
+            <Section style={styles.statsContainer}>
+              {/* Add financial stats or data display here */}
+            </Section>
+          </Container>
+        </Body>
+      </Html>
+    );  }
 
   if (type === "budget-alert") {
     return (
