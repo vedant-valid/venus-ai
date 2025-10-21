@@ -86,6 +86,7 @@ export function AddTransactionForm({
       ...data,
       amount: parseFloat(data.amount),
     };
+    console.log(data)
 
     if (editMode) {
       transactionFn(editId, formData);
@@ -104,6 +105,7 @@ export function AddTransactionForm({
       if (scannedData.category) {
         setValue("category", scannedData.category);
       }
+      console.log(scannedData)
       toast.success("Receipt scanned successfully");
     }
   };
