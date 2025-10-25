@@ -11,13 +11,16 @@ import {
 import HeroSection from "@/components/hero";
 import Link from "next/link";
 import { FeaturesSectionWithHoverEffects } from "@/components/blocks/feature-section-with-hover-effects";
+import { ShuffleHero } from "@/components/ui/shuffle-grid";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <HeroSection />
-
+      {/* <HeroSection /> */}
+      <div className="flex w-full h-screen justify-center items-center">
+        <ShuffleHero />
+      </div>
       {/* Stats Section */}
       <section className="py-20 bg-blue-50">
         <div className="container mx-auto px-4">
